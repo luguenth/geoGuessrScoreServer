@@ -1,0 +1,20 @@
+<section>
+    <table> 
+        <tr>
+            <th>State</th>
+            <th>Player</th>
+            <th>Mapname</th>
+            <th>Gamemode</th>
+            <th>Total Score</th>
+        </tr>
+        {% for game in games %}
+            <tr>
+                <td>&#{{game.stateEmoji}};</td>
+                <td><a href="{{ path('player_detail', {id: game.player.geoGuessId}) }}">{{game.player.nickname}}</a></td>
+                <td><a href="{{ path('game_detail', {id: game.token}) }}">{{game.mapName}}</a></td>
+                <td>{{game.gameModeShort}}</td>
+                <td>{{game.totalScoreInPoints}} pts.</td>
+            </tr>      
+        {% endfor %}
+    </table>
+</section>

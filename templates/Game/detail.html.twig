@@ -1,0 +1,13 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <article>
+        <p> Rounds: </p>
+        {% for round in game.rounds %}
+            <p>{{round.panoId}}</p>
+        {% endfor %}
+        <p> Guesses: </p>
+        {% for guess in game.guesses %}
+            <p>{{guess.distanceInMeters}}m</p>
+        {% endfor %}
+    </article>
+{% endblock %}

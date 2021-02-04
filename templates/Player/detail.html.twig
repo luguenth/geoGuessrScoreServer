@@ -1,0 +1,12 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <section>
+        <aside>
+            {{player.nickname}}
+            <br>
+            <a href="https://www.geoguessr.com/user/{{player.geoGuessId}}"><small>{{player.geoGuessId}}</small></a>
+        </aside>
+    </section>
+    <hr>
+    {% include "Game/_game_table.html.twig" with {"games": player.geoGuessrGames} %}
+{% endblock %}

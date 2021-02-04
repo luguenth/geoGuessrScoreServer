@@ -1,0 +1,8 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <article>
+        {% for player in players %}
+            <p>{{player.nickname}}</p>
+        {% endfor %}
+    </article>
+{% endblock %}

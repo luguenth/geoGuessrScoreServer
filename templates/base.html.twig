@@ -3,11 +3,20 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+            <link rel="stylesheet" type="text/css" href="https://unpkg.com/mvp.css">
+        {% endblock %}
 
         {% block javascripts %}{% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <main>
+            <header>
+                <h1>
+                    <a href="{{ path('game_index') }}">GeoGuessr</a>Scores &#128506;
+                </h1>
+            </header>
+            {% block body %}{% endblock %}
+        </main>
     </body>
 </html>

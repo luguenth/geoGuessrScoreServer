@@ -21,7 +21,7 @@ class GeoGuessrApiService
         HttpClientInterface $httpClient,
         EntityManagerInterface $entityManager,
         GeoGuessrGameRepository $geoGuessrGameRepository,
-        PlayerRepository $playerRepository,
+        PlayerRepository $playerRepository
         )
     {
         $this->client = $httpClient;
@@ -33,6 +33,7 @@ class GeoGuessrApiService
 
     public function getGameData(string $token) :array
     {
+        $token = $this->sanitizeInput($token);
         $result = $this->client->request(
             'GET',
             $this->apiUrl . "games/" . $token,
@@ -49,8 +50,9 @@ class GeoGuessrApiService
 
     public function getPlayerGames(string $playerId, int $page = 0) :array
     {
+        $playerId = $this->sanitizeInput($playerId);
         $cookie = "__gads=ID=1cab7e8be7dbede9-221319be5dba008a:T=1612451231:S=ALNI_MZ6wRZyImXszkjnB6hl-WslGTdt0A; devicetoken=6B2621AB7F; _ga=GA1.2.772285641.1612451237; _gid=GA1.2.386872807.1612451242; G_ENABLED_IDPS=google; _ncfa=EKYoaut1UyvfxCa2oUDhtyDnUrNQSdcmnXmSPRdTcG0%3dkTLueXKlmEtDHGp8Q38KPsA3qypCRq%2fY6bqaLoCAvJmcGuRhVGZl3DfKv8N0ghYC; __stripe_mid=78799611-9369-41dc-8d1d-6b2a11c657cef1fe6d";
-        $count = 50;
+        $count = 100;
         $result = $this->client->request(
             'GET',
             $this->apiUrl . "social/feed/" . $playerId,
@@ -66,9 +68,9 @@ class GeoGuessrApiService
         );
         dump($result);
         $result = json_decode($result->getContent(), true);
-        if(count($result) < $count){
+        if(count($result) >= $count){
             error_log("recursivvve");
-            array_merge($this->getPlayerGames($playerId, $page++), $result);
+            array_merge($this->getPlayerGames($playerId, ++$page), $result);
         }
         return $result;
     }
@@ -77,7 +79,11 @@ class GeoGuessrApiService
     public function persistGame(string $token): Response
     {
         $game = $this->gameRepo->findOneBy(['token' => $token]) ?? new GeoGuessrGame(); 
-
+        if($game->getState()==="finished") {
+            return new Response(
+                '<html><body>Game Already Exists</body></html>'
+            );
+        }
         $result = $this->getGameData($token);
         if(empty($result)){
             return new Response(
@@ -101,7 +107,8 @@ class GeoGuessrApiService
             ->setRound($result["round"])
             ->setTotalDistanceInMeters($result["player"]["totalDistanceInMeters"])
             ->setTotalScoreInPercentage($result["player"]["totalScore"]["percentage"])
-            ->setTotalScoreInPoints($result["player"]["totalScore"]["amount"]);
+            ->setTotalScoreInPoints($result["player"]["totalScore"]["amount"])
+            ->setTotalTime($result["player"]["totalTime"]);
 
         $round_difference = count($result["rounds"]) - count($game->getRounds());
         dump($game->getRounds());
@@ -158,5 +165,11 @@ class GeoGuessrApiService
         return new Response(
             '<html><body>Imported Game</body></html>'
         );
+    }
+
+    private function sanitizeInput(string $token):string
+    {
+        $pattern = "/[^0-9!&',-.\\/a-zA-Z\n]/";
+        return preg_replace($pattern, "", $token);
     }
 }

@@ -6,6 +6,7 @@ use App\Entity\GeoGuessrGame;
 use App\Entity\Guess;
 use App\Entity\Player;
 use App\Entity\Round;
+use App\Repository\GeoGuessrGameRepository;
 use App\Service\GeoGuessrApiService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,7 +24,7 @@ class GeoGuessrGameController extends AbstractController
     public function index(Request $request, GeoGuessrApiService $geoGuessrApiService): Response
     {
         $form = $this->createFormBuilder()
-            ->add('token', TextType::class)
+            ->add('token', TextType::class, ['label' => 'Game Token'])
             ->add('search', SubmitType::class, ['label' => 'Index my Game!'])
             ->getForm();
 
@@ -40,7 +41,7 @@ class GeoGuessrGameController extends AbstractController
         }
 
         $gameRepo = $this->getDoctrine()->getRepository(GeoGuessrGame::class);
-        $games = $gameRepo->findAll();
+        $games = $gameRepo->findBy([],['totalScoreInPoints'=> "DESC"], 50);
 
         return $this->render('Game/index.html.twig', [
             'form' => $form->createView(),
@@ -49,15 +50,40 @@ class GeoGuessrGameController extends AbstractController
     }
 
     /**
-     * @Route("/game/{id}", name="game_detail")
+     * @Route("/game/{token}", name="game_detail")
      */
-    public function detail(Request $request, string $id): Response
+    public function detail(Request $request, string $token): Response
     {
         $gameRepo = $this->getDoctrine()->getRepository(GeoGuessrGame::class);
-        $game = $gameRepo->findOneBy(['token' => $id]);
+        $game = $gameRepo->findOneBy(['token' => $token]);
 
         return $this->render('Game/detail.html.twig', [
             'game' => $game,
+        ]);
+    }
+
+    /**
+     * @Route("/game/{token}/comparison/", name="game_comparison")
+     */
+    public function comparison(Request $request, string $token): Response
+    {
+        /**
+         * @var GeoGuessrGameRepository
+         */
+        $gameRepo = $this->getDoctrine()->getRepository(GeoGuessrGame::class);
+        /** @var GeoGuessrGame $game */
+        $game = $gameRepo->findOneBy(['token' => $token]);
+        $games = $gameRepo->findBy([
+            'forbidMoving' => $game->getForbidMoving(),
+            'forbidRotating' => $game->getForbidRotating(),
+            'forbidZooming' => $game->getForbidZooming(),
+            'timeLimit' => $game->getTimeLimit(),
+            'round' => $game->getRound(),
+            'map' => $game->getMap(),
+        ], ['totalScoreInPoints'=> "DESC"]);
+
+        return $this->render('Game/comparison.html.twig', [
+            'games' => $games,
         ]);
     }
 

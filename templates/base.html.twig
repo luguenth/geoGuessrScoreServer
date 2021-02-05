@@ -1,22 +1,62 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}
-            <link rel="stylesheet" type="text/css" href="https://unpkg.com/mvp.css">
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/mvp.css') }}">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+              integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+              crossorigin=""/>
+    {% endblock %}
 
-        {% block javascripts %}{% endblock %}
-    </head>
-    <body>
-        <main>
-            <header>
-                <h1>
-                    <a href="{{ path('game_index') }}">GeoGuessr</a>Scores &#128506;
-                </h1>
-            </header>
-            {% block body %}{% endblock %}
-        </main>
-    </body>
+    {% block javascripts %}
+
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+                integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+                crossorigin=""></script>
+        <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.min.js"></script>
+    {% endblock %}
+</head>
+<body>
+<main>
+    <header>
+        <nav>
+            <img src="{{ asset('assets/images/undraw_lost_bqr2.svg') }}" height="100">
+            <ul>
+                <li>
+                    <a href="{{ path('game_index') }}">
+                        Games
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('player_index') }}">
+                        Player
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('map_index') }}">
+                        Maps
+                    </a>
+                </li>
+            </ul>
+
+        </nav>
+    </header>
+    {% block body %}{% endblock %}
+</main>
+
+<footer>
+    <main>
+        <article>
+            <p>
+            <h3>GeoGuessrScores &#128506;</h3></p>
+            <p><a href="https://github.com/luguenth/geoGuessrScoreServer">Github</a></p>
+            <p><a href="/impressum">Statistics</a></p>
+            <p><a href="/impressum">Imprint</a></p>
+        </article>
+    </main>
+</footer>
+</body>
+
 </html>

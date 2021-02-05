@@ -102,7 +102,6 @@ class GeoGuessrGameController extends AbstractController
                 '<html><body>Err</body></html>'
             );
         }
-        dump($result);
         $game
             ->setToken($result["token"])
             ->setType($result["type"])
@@ -122,8 +121,6 @@ class GeoGuessrGameController extends AbstractController
             ->setTotalScoreInPoints($result["player"]["totalScore"]["amount"]);
 
         $round_difference = count($result["rounds"]) - count($game->getRounds());
-        dump($game->getRounds());
-        dump($round_difference);
         if ($round_difference > 0) {
             array_splice($result["rounds"], 0, -1 * $round_difference);
             foreach ($result["rounds"] as $round) {

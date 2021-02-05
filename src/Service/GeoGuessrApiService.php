@@ -44,7 +44,6 @@ class GeoGuessrApiService
             error_log("404");
             return [];
         }
-        dump($result);
         return $result;
     }
 
@@ -66,7 +65,6 @@ class GeoGuessrApiService
                 ]
             ]
         );
-        dump($result);
         $result = json_decode($result->getContent(), true);
         if(count($result) >= $count){
             error_log("recursivvve");
@@ -90,7 +88,6 @@ class GeoGuessrApiService
                 '<html><body>Err</body></html>'
             );
         }
-        dump($result);
         $game
             ->setToken($result["token"])
             ->setType($result["type"])
@@ -111,8 +108,6 @@ class GeoGuessrApiService
             ->setTotalTime($result["player"]["totalTime"]);
 
         $round_difference = count($result["rounds"]) - count($game->getRounds());
-        dump($game->getRounds());
-        dump($round_difference);
         if ($round_difference > 0) {
             array_splice($result["rounds"], 0, -1 * $round_difference);
             foreach ($result["rounds"] as $round) {

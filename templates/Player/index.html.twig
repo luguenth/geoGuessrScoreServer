@@ -1,8 +1,17 @@
 {% extends "base.html.twig" %}
 {% block body %}
-    <article>
-        {% for player in players %}
-            <p>{{player.nickname}}</p>
-        {% endfor %}
-    </article>
+    <section>
+        <table>
+            <tr>
+                <th>Nickname</th>
+                <th>GeoGuessrId</th>
+            </tr>
+            {% for player in players %}
+                <tr>
+                    <td><a href="{{ path('player_detail', {id: player.geoGuessId}) }}">{{player.nickname}}</a></td>
+                    <td><a href="{{ path('player_detail', {id: player.geoGuessId}) }}">{{player.geoGuessId}}</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </section>
 {% endblock %}

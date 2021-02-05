@@ -10,7 +10,7 @@
                 id: 'mapbox/streets-v11',
                 tileSize: 512,
                 zoomOffset: -1,
-                accessToken: {{ mapbox_token }}
+                accessToken: '{{ mapbox_token }}'
             }).addTo(mymap);
             var heat = L.heatLayer(
                 {{ heatmap_arr | raw }}

@@ -16,4 +16,6 @@
 ###< symfony/phpunit-bridge ###
 
 /.idea
-/config/packages/twig.yaml
+!/symfony.lock
+!/composer.lock
+!/config/packages/twig.yaml

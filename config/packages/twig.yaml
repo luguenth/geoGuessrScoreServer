@@ -1,4 +1,4 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
     globals:
-        mapbox_token: 'pk.eyJ1IjoibHVndWVudGgiLCJhIjoiY2tqYjh6ZHF3MmZ3MjJ3bnZvYjRyMjc2bCJ9.zt0aAaQsMB0xXaNA9VR-Aw'
+        mapbox_token: 'pk.eyJ1IjoibHVndWVudGgiLCJhIjoiY2trc2c2djEzMTMweDJvcW5pd3Y5YmZtOSJ9.F3oZll0LlabaexNsG_1NkA'

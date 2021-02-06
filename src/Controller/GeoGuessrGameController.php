@@ -12,6 +12,7 @@ use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,6 +24,7 @@ class GeoGuessrGameController extends AbstractController
      */
     public function index(Request $request, GeoGuessrApiService $geoGuessrApiService): Response
     {
+        $feedback = "";
         $form = $this->createFormBuilder()
             ->add('token', TextType::class, ['label' => 'Game Token'])
             ->add('search', SubmitType::class, ['label' => 'Index my Game!'])
@@ -35,8 +37,15 @@ class GeoGuessrGameController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $data = $form->getData();
-
-            $this->persistGame($request, $data['token'], $geoGuessrApiService);
+            try {
+                if($geoGuessrApiService->persistGame($data['token'])){
+                    $feedback = "Successfully imported your game";
+                }
+            } catch (\InvalidArgumentException $e){
+                $form->addError(new FormError($e->getMessage()));
+            } catch (\Exception $e) {
+                $form->addError(new FormError("We had trouble importing your game"));
+            }
 
         }
 
@@ -46,6 +55,7 @@ class GeoGuessrGameController extends AbstractController
         return $this->render('Game/index.html.twig', [
             'form' => $form->createView(),
             'games' => $games,
+            'feedback' => $feedback
         ]);
     }
 

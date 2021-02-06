@@ -66,16 +66,6 @@ class GeoGuessrGame
     private $forbidRotating;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $map;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $mapName;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $panoramaProvider;
@@ -129,6 +119,12 @@ class GeoGuessrGame
      * @ORM\Column(type="datetime")
      */
     private $lastChanged;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Map::class, inversedBy="geoGuessrGames")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $map;
 
     public function __construct()
     {
@@ -246,30 +242,6 @@ class GeoGuessrGame
     public function setForbidRotating(bool $forbidRotating): self
     {
         $this->forbidRotating = $forbidRotating;
-
-        return $this;
-    }
-
-    public function getMap(): ?string
-    {
-        return $this->map;
-    }
-
-    public function setMap(string $map): self
-    {
-        $this->map = $map;
-
-        return $this;
-    }
-
-    public function getMapName(): ?string
-    {
-        return $this->mapName;
-    }
-
-    public function setMapName(string $mapName): self
-    {
-        $this->mapName = $mapName;
 
         return $this;
     }
@@ -445,9 +417,9 @@ class GeoGuessrGame
     public function getStateEmoji(): ?string
     {
         switch($this->state){
-            case 'finished': return "128994";
-            case 'started': return "128992";
-            default: return "128308"; 
+            case 'finished': return "🏁";
+            case 'started': return "⌛";
+            default: return "❓";
         }
 
     }
@@ -470,5 +442,17 @@ class GeoGuessrGame
 
         return $gamemode;
 
+    }
+
+    public function getMap(): ?Map
+    {
+        return $this->map;
+    }
+
+    public function setMap(?Map $map): self
+    {
+        $this->map = $map;
+
+        return $this;
     }
 }

@@ -1,0 +1,16 @@
+<section>
+    <table>
+        <tr>
+            <th>MapToken</th>
+            <th>Mapname</th>
+            <th>Rounds Played</th>
+        </tr>
+        {% for map in maps %}
+            <tr>
+                <td><a href="{{ path('map_detail', {token: map.token}) }}">{{map.token}}</a></td>
+                <td><a href="{{ path('map_detail', {token: map.token}) }}">{{map.name}}</a></td>
+                <td>&#{{map.name}};</td>
+            </tr>
+        {% endfor %}
+    </table>
+</section>

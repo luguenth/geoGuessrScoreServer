@@ -1,0 +1,16 @@
+<section>
+    <table>
+        <tr>
+            <th>RoundId</th>
+            <th>lat</th>
+            <th>lng</th>
+        </tr>
+        {% for round in rounds %}
+            <tr>
+                <td>{{ round.id }}</td>
+                <td>{{ round.lat }}</td>
+                <td>{{ round.lng }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</section>

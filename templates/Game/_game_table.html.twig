@@ -10,9 +10,9 @@
         </tr>
         {% for game in games %}
             <tr>
-                <td>&#{{game.stateEmoji}};</td>
+                <td>{{game.stateEmoji}}</td>
                 <td><a href="{{ path('player_detail', {id: game.player.geoGuessId}) }}">{{game.player.nickname}}</a></td>
-                <td><a href="{{ path('game_detail', {token: game.token}) }}">{{game.mapName}}</a></td>
+                <td><a href="{{ path('game_detail', {token: game.token}) }}">{{game.map.name}}</a></td>
                 <td>{{game.gameModeShort}}</td>
                 <td>{{game.totalScoreInPoints}} pts.</td>
                 <td><a href="{{ path('game_comparison', {token: game.token}) }}">&#x1F504;</a></td>

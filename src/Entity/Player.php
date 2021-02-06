@@ -34,6 +34,11 @@ class Player
      */
     private $geoGuessrGames;
 
+    /**
+     * @ORM\Column(type="string", length=1024, nullable=true)
+     */
+    private $cookie;
+
     public function __construct()
     {
         $this->geoGuessrGames = new ArrayCollection();
@@ -94,6 +99,18 @@ class Player
                 $geoGuessrGame->setPlayer(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCookie(): ?string
+    {
+        return $this->cookie;
+    }
+
+    public function setCookie(?string $cookie): self
+    {
+        $this->cookie = $cookie;
 
         return $this;
     }

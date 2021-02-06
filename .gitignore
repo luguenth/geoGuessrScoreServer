@@ -16,3 +16,4 @@
 ###< symfony/phpunit-bridge ###
 
 /.idea
+/config/packages/twig.yaml

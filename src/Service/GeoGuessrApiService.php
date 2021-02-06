@@ -4,13 +4,16 @@ namespace App\Service;
 
 use App\Entity\GeoGuessrGame;
 use App\Entity\Guess;
+use App\Entity\Map;
 use App\Entity\Player;
 use App\Entity\Round;
 use App\Repository\GeoGuessrGameRepository;
+use App\Repository\MapRepository;
 use App\Repository\PlayerRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use http\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -21,7 +24,8 @@ class GeoGuessrApiService
         HttpClientInterface $httpClient,
         EntityManagerInterface $entityManager,
         GeoGuessrGameRepository $geoGuessrGameRepository,
-        PlayerRepository $playerRepository
+        PlayerRepository $playerRepository,
+    MapRepository $mapRepository
         )
     {
         $this->client = $httpClient;
@@ -29,6 +33,7 @@ class GeoGuessrApiService
         $this->entityManager = $entityManager;
         $this->gameRepo = $geoGuessrGameRepository;
         $this->playerRepo = $playerRepository;
+        $this->mapRepo = $mapRepository;
     }
 
     public function getGameData(string $token) :array
@@ -47,10 +52,9 @@ class GeoGuessrApiService
         return $result;
     }
 
-    public function getPlayerGames(string $playerId, int $page = 0) :array
+    public function getPlayerGames(string $playerId, string $cookie, int $page = 0) :array
     {
         $playerId = $this->sanitizeInput($playerId);
-        $cookie = "__gads=ID=1cab7e8be7dbede9-221319be5dba008a:T=1612451231:S=ALNI_MZ6wRZyImXszkjnB6hl-WslGTdt0A; devicetoken=6B2621AB7F; _ga=GA1.2.772285641.1612451237; _gid=GA1.2.386872807.1612451242; G_ENABLED_IDPS=google; _ncfa=EKYoaut1UyvfxCa2oUDhtyDnUrNQSdcmnXmSPRdTcG0%3dkTLueXKlmEtDHGp8Q38KPsA3qypCRq%2fY6bqaLoCAvJmcGuRhVGZl3DfKv8N0ghYC; __stripe_mid=78799611-9369-41dc-8d1d-6b2a11c657cef1fe6d";
         $count = 100;
         $result = $this->client->request(
             'GET',
@@ -84,9 +88,7 @@ class GeoGuessrApiService
         }
         $result = $this->getGameData($token);
         if(empty($result)){
-            return new Response(
-                '<html><body>Err</body></html>'
-            );
+            throw new InvalidArgumentException("Couldn't find any Game to import");
         }
         $game
             ->setToken($result["token"])
@@ -98,8 +100,6 @@ class GeoGuessrApiService
             ->setForbidMoving($result["forbidMoving"])
             ->setForbidZooming($result["forbidZooming"])
             ->setForbidRotating($result["forbidRotating"])
-            ->setMap($result["map"])
-            ->setMapName($result["mapName"])
             ->setPanoramaProvider($result["panoramaProvider"])
             ->setRound($result["round"])
             ->setTotalDistanceInMeters($result["player"]["totalDistanceInMeters"])
@@ -152,8 +152,19 @@ class GeoGuessrApiService
             ->setGeoGuessId($result["player"]["id"])
             ->setNickname($result["player"]["nick"]);
         $game->setPlayer($player);
-        $game->setLastChanged(New DateTime('now'));
         $this->entityManager->persist($player);
+
+        $map =
+            $this->mapRepo->findOneBy(["token" => $result["map"]])
+            ?? new Map();
+        $map
+            ->setToken($result["map"])
+            ->setName($result["mapName"]);
+        $game->setMap($map);
+        $this->entityManager->persist($map);
+
+        $game->setLastChanged(New DateTime('now'));
+
         $this->entityManager->persist($game);
         $this->entityManager->flush();
 

@@ -1,5 +1,6 @@
 {% extends "base.html.twig" %}
 {% block body %}
+
     <article>
 
         <div id="mapid" style="height: 400px"></div>
@@ -32,7 +33,7 @@
                 accessToken: '{{ mapbox_token }}'
             }).addTo(mymap);
             {% for key, round in game.rounds %}
-                L.marker([{{round.lat}}, {{round.lng}}], getEmojiMarkerOption("🟢")).addTo(mymap);
+                L.marker([{{round.lat}}, {{round.lng}}], getEmojiMarkerOption("🌀")).bindTooltip("{{ key +1}}", {permanent: true}).addTo(mymap);
                 L.marker([{{game.guesses[key].lat}}, {{game.guesses[key].lng}}], getEmojiMarkerOption("🔵")).addTo(mymap);
                 L.polyline(
                     [
@@ -42,4 +43,30 @@
             {% endfor %}
         </script>
     </article>
+    <br>
+    <section>
+        <table>
+            <tr>
+                <th>Player</th>
+                {% for key, round in game.guesses %}
+                    <th>Round {{ key +1 }}</th>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td><a href="{{ path('player_detail', {id: game.player.geoGuessId}) }}">{{game.player.nickname}}</a></td>
+                {% for guess in game.guesses %}
+                    <td>
+                        {{ guess.roundScoreInPoints | number_format(0, '.', ',')}} Points
+                        <br>
+                        <small>{{ guess.distanceInMeters | number_format(2, '.', ',')}} m</small>
+                        <br>
+                        <small>{{ guess.time }} s</small>
+
+                    </td>
+                {% endfor %}
+            </tr>
+
+        </table>
+    </section>
 {% endblock %}

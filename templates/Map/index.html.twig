@@ -1,5 +1,7 @@
 {% extends "base.html.twig" %}
 {% block body %}
+    {% include "Map/_map_table.html.twig" with {"maps": maps} %}
+    <hr>
     <article>
         <div id="mapid" style="height: 400px"></div>
         <script>
@@ -17,4 +19,5 @@
             , {radius: 30}).addTo(mymap);
         </script>
     </article>
+
 {% endblock %}

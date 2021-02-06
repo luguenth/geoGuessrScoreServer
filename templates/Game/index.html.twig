@@ -1,5 +1,7 @@
 {% extends "base.html.twig" %}
 {% block body %}
+
+
     <section>
         <p> 
             You can find the <mark>Token</mark> in your URL when you are playing a GeoGuessr Game
@@ -14,6 +16,10 @@
         {{form(form)}}
         </p>
     </section>
+    {% if feedback %}
+        <hr>
+        <article><aside><p>{{ feedback }}</p></aside></article>
+    {% endif %}
     <hr>
     {% include "Game/_game_table.html.twig" with {"games": games} %}
 

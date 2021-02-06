@@ -1,0 +1,13 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <section>
+        <aside>
+            {{map.name}}
+            <br>
+            <a href="https://www.geoguessr.com/maps/{{map.token}}"><small>{{map.token}}</small></a>
+        </aside>
+    </section>
+    <hr>
+    {% include "Round/_round_table.html.twig" with {"mapRounds": rounds} %}
+
+{% endblock %}
